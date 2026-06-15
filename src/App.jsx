@@ -9,10 +9,11 @@ function RootLayout() {
   return (
     <div className="relative flex min-h-screen flex-col">
       <SiteHeader />
-      <SpeedInsights/>
       <main className="flex-1">
         <Outlet />
       </main>
+            <SpeedInsights/>
+
     </div>
   );
 }

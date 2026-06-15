@@ -28,9 +28,9 @@ export function FeatureWithIllustration() {
             <img
               src="/features.svg"
               className="w-full h-auto object-contain"
-              fetchPriority="high"
-              loading="eager"
-              decoding="sync"
+              fetchPriority="low"
+              loading="lazy"
+              decoding="async"
             />
           </span>
         </div>

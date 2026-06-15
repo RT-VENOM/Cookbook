@@ -2,8 +2,8 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { SiteHeader } from "./components/header"; // Adjust this path to where your header is
 import Home from "./pages/home";
 import { ROUTES } from "@/lib/routes";
-import { SpeedInsights } from "@vercel/speed-insights/next"
-
+import { SpeedInsights } from "@vercel/speed-insights/react";
+import { Analytics } from "@vercel/analytics/react";
 // 1. The Layout: Header stays at the top, the <Outlet> renders the page content below
 function RootLayout() {
   return (
@@ -12,8 +12,8 @@ function RootLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
-            <SpeedInsights/>
-
+      <SpeedInsights />
+      <Analytics />
     </div>
   );
 }

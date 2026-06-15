@@ -4,6 +4,7 @@ import Features from "@/components/features";
 import { FinalCTA } from "@/components/final_cta";
 import { FeatureWithIllustration } from "@/components/feature_with_illustration";
 import { FAQ } from "@/components/faq";
+import { ReviewsSection } from "@/components/reviews";
 import { Footer } from "@/components/footer";
 import { FadeIn } from "@/components/fadewrapper";
 
@@ -21,6 +22,9 @@ export default function Home() {
       </FadeIn>
       <FadeIn>
         <FeatureWithIllustration />
+      </FadeIn>
+      <FadeIn>
+        <ReviewsSection />
       </FadeIn>
       <FadeIn>
         <FAQ />

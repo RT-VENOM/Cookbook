@@ -52,7 +52,7 @@ export default function Hero() {
                 Explore Recipes
               </Button>
               <Button size="lg" variant="outline" className="h-12 px-8 text-base font-medium bg-background/50 backdrop-blur-sm">
-                Watch Masterclasses
+                Sign-up
               </Button>
             </div>
           </div>

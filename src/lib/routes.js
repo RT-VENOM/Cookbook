@@ -3,5 +3,12 @@
 export const ROUTES = {
   HOME: "/",
   DOCS: "/docs",
-  ERROR: "/error"
+  ERROR: "/error",
+  SIGNUP: "/signup",
+  PROFILE: "/profile"
   };
+
+
+export const API = {
+  LOGIN : "/data.json"
+}

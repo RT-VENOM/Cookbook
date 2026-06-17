@@ -17,16 +17,30 @@ import { API } from "@/lib/routes";
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
-import { getRequest } from "@/lib/api";
+import { getRequest, postRequest } from "@/lib/api"; // Ensure postRequest is imported
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AuthSchema } from "@/lib/validations";
 
 export function AuthModal({ isOpen, onClose }) {
-  const [username, setUsername] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState(null);
 
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(AuthSchema),
+    defaultValues: { username: "", password: "" },
+    mode: "onChange",
+  });
+
+  const username = watch("username");
+
   useEffect(() => {
-    // Added .trim() to prevent spaces from triggering API calls
-    if (username.trim() === "") {
+    if (!username || username.trim() === "") {
       setIsSearching(false);
       setUsernameStatus(null);
       return;
@@ -38,18 +52,26 @@ export function AuthModal({ isOpen, onClose }) {
     const debounceTimer = setTimeout(async () => {
       try {
         const response = await getRequest(
-          `${API.CHECK_USERNAME}?username=${username}`,
+          `${API.CHECK_USERNAME}?username=${username.trim()}`,
         );
         setUsernameStatus(response.available ? "available" : "taken");
-        setIsSearching(false);
       } catch (error) {
         console.error("Failed to check username", error);
+      } finally {
         setIsSearching(false);
       }
     }, 1000);
 
     return () => clearTimeout(debounceTimer);
   }, [username]);
+
+  const onSubmit = async (data) => {
+    try {
+      console.log("Submitting secure data:", data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -91,26 +113,30 @@ export function AuthModal({ isOpen, onClose }) {
             </p>
           </div>
 
-          <FieldInput
-            username={username}
-            setUsername={setUsername}
-            isSearching={isSearching}
-            usernameStatus={usernameStatus}
-          />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FieldInput
+              register={register}
+              isSearching={isSearching}
+              usernameStatus={usernameStatus}
+              errors={errors}
+            />
 
-          <div className="mt-6 flex flex-col gap-3">
-            <Button className="w-full">Sign Up</Button>
-            <Button variant="outline" className="w-full">
-              Login
-            </Button>
-          </div>
+            <div className="mt-6 flex flex-col gap-3">
+              <Button type="submit" disabled={isSubmitting} className="w-full">
+                {isSubmitting ? "Creating Account..." : "Sign Up"}
+              </Button>
+              <Button type="button" variant="outline" className="w-full">
+                Login
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   );
 }
 
-function FieldInput({ username, setUsername, isSearching, usernameStatus }) {
+function FieldInput({ register, isSearching, usernameStatus, errors }) {
   return (
     <FieldSet>
       <FieldGroup className="space-y-4">
@@ -121,11 +147,9 @@ function FieldInput({ username, setUsername, isSearching, usernameStatus }) {
               id="username"
               type="text"
               placeholder="Max Leiter"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              {...register("username")} // Hooks input to Zod
             />
 
-            {/* BUG FIX: Explicitly handle each state condition to prevent icon collisions */}
             {isSearching && (
               <InputGroupAddon align="inline-end">
                 <Spinner />
@@ -145,7 +169,12 @@ function FieldInput({ username, setUsername, isSearching, usernameStatus }) {
             )}
           </InputGroup>
           <FieldDescription>
-            {usernameStatus === "taken" ? (
+            {/* Prioritize Zod errors, then fallback to API errors */}
+            {errors.username ? (
+              <span className="text-red-500 font-medium">
+                {errors.username.message}
+              </span>
+            ) : usernameStatus === "taken" ? (
               <span className="text-red-500 font-medium">
                 This username is taken.
               </span>
@@ -157,15 +186,24 @@ function FieldInput({ username, setUsername, isSearching, usernameStatus }) {
 
         <Field className="space-y-1.5">
           <FieldLabel htmlFor="password">Password</FieldLabel>
-          <Input id="password" type="password" placeholder="••••••••" />
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            {...register("password")} // Hooks input to Zod
+          />
           <FieldDescription>
-            Must be at least 8 characters long.
+            {/* Display dynamic Zod error messages */}
+            {errors.password ? (
+              <span className="text-red-500 font-medium">
+                {errors.password.message}
+              </span>
+            ) : (
+              "Must be at least 8 characters long."
+            )}
           </FieldDescription>
         </Field>
       </FieldGroup>
     </FieldSet>
   );
 }
-
-
-

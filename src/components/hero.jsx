@@ -60,7 +60,7 @@ export default function Hero() {
                   SetisAuthModelOpen(true);
                 }}
               >
-                Sign up for free
+                Create an Account
               </Button>
               {isAuthModalOpen && (
                 <AuthModal

@@ -11,5 +11,6 @@ export const ROUTES = {
 
 export const API = {
   LOGIN : "/data.json",
-  CHECK_USERNAME: "https://api.cookbookguide.dpdns.org/api/v1/cookbook/auth/check-username"
+  CHECK_USERNAME: "https://api.cookbookguide.dpdns.org/api/v1/cookbook/auth/check-username",
+  REGISTER: "https://api.cookbookguide.dpdns.org/api/v1/cookbook/auth/register"
 }

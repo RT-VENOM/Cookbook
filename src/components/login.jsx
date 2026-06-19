@@ -13,7 +13,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { API } from "@/lib/routes";
+import { API, ROUTES } from "@/lib/routes";
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
@@ -67,7 +67,11 @@ export function AuthModal({ isOpen, onClose }) {
 
   const onSubmit = async (data) => {
     try {
-      console.log("Submitting secure data:", data);
+      const response = await postRequest(API.REGISTER, {
+        username: data.username.trim(),
+        password: data.password
+      });
+      console.log("Account created!", response);
     } catch (error) {
       console.error(error);
     }

@@ -11,7 +11,7 @@ export const ROUTES = {
 
 
 export const API = {
-  LOGIN : "/data.json",
+  LOGIN : `${BASE_URL}/auth/login`,
   CHECK_USERNAME: `${BASE_URL}/auth/check-username`,
   REGISTER: `${BASE_URL}/auth/register`,
   ME: `${BASE_URL}/auth/me`

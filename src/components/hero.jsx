@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import Skeleton from "./fading_skeleton";
 import { Button } from "@/components/ui/button";
 import { AuthModal } from "./login";
+import { useAuth } from "@/components/authcontext"; 
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/lib/routes";
 export default function Hero() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthModalOpen, SetisAuthModelOpen] = useState(false);
-
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -49,7 +53,7 @@ export default function Hero() {
             </div>
 
             <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
-              <Button size="lg" className="h-12 px-8 text-base font-medium">
+              <Button size="lg" className="h-12 px-8 text-base font-medium" onClick={()=> {navigate(ROUTES.FEED)}}>
                 Explore Recipes
               </Button>
               <Button
@@ -57,10 +61,14 @@ export default function Hero() {
                 variant="outline"
                 className="h-12 px-8 text-base font-medium bg-background/50 backdrop-blur-sm"
                 onClick={() => {
-                  SetisAuthModelOpen(true);
+                  if (isAuthenticated) {
+                    navigate(ROUTES.FEED);
+                  } else {
+                    SetisAuthModelOpen(true);
+                  }
                 }}
               >
-                Create an Account
+                {isAuthenticated ? `Welcome, ${user?.username}` : "Create an Account"}
               </Button>
               {isAuthModalOpen && (
                 <AuthModal

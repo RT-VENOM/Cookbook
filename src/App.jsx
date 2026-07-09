@@ -5,6 +5,7 @@ import { ROUTES } from "@/lib/routes";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
 import ErrorPage from "@/pages/error"
+import RecipeFeed from "./components/feed";
 // 1. The Layout: Header stays at the top, the <Outlet> renders the page content below
 function RootLayout() {
   return (
@@ -34,7 +35,8 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> }, // Loads on "/"
       { path: ROUTES.DOCS, element: <Docs /> }, // Loads on "/docs"
       { path: ROUTES.ERROR, element: <ErrorPage/>},
-      { path: "*", element: <ErrorPage/>}
+      { path: "*", element: <ErrorPage/>},
+      { path: ROUTES.FEED, element: <RecipeFeed/>}
     ],
   },
 ]);

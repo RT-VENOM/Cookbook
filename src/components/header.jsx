@@ -285,7 +285,7 @@ function NavigationMenuDemo() {
         {/* Simple Link */}
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link to="/search">Explore All</Link>
+            <Link to={ROUTES.FEED}>Explore All</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

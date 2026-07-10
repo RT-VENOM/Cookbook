@@ -6,14 +6,24 @@ export function InitialLoadingScreen() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Simulates a fast initial load that slows down right before 100%
+    // 1. Instantly check and apply the saved theme or system default
+    const isDarkMode =
+      localStorage.getItem("theme") === "dark" ||
+      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    // 2. Run the loading animation
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 95) {
           clearInterval(interval);
           return prev;
         }
-        // Increment faster at the start, slower at the end
         const increment = prev < 50 ? 15 : prev < 85 ? 5 : 2;
         return prev + increment;
       });

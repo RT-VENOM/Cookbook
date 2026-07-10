@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { getRequest } from "@/lib/api";
 import { API } from "@/lib/routes";
+import { InitialLoadingScreen } from "@/components/loading-screen"; // 1. Import the new screen
 
 // 1. Create the Context
 const AuthContext = createContext();
@@ -36,8 +37,8 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {/* Don't render the app until we know if they are logged in or not */}
-      {isLoading ? <div className="min-h-screen flex items-center justify-center">Loading Session...</div> : children}
+      {/* 2. Swap the basic div for the premium animated screen */}
+      {isLoading ? <InitialLoadingScreen /> : children}
     </AuthContext.Provider>
   );
 }

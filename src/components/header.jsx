@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/lib/routes";
-import { UserCircle, CookingPot, Search, Menu, X, Sun, Moon } from "lucide-react";
+import {
+  UserCircle,
+  CookingPot,
+  Search,
+  Menu,
+  X,
+  Sun,
+  Moon,
+  Plus,
+} from "lucide-react";
+import { useAuth } from "@/components/authcontext";
 
 import {
   NavigationMenu,
@@ -18,22 +28,32 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const components = [
   {
     title: "Alert Dialog",
     href: "/docs/primitives/alert-dialog",
-    description: "A modal dialog that interrupts the user with important content and expects a response.",
+    description:
+      "A modal dialog that interrupts the user with important content.",
   },
   {
     title: "Hover Card",
     href: "/docs/primitives/hover-card",
-    description: "For sighted users to preview content available behind a link.",
+    description:
+      "For sighted users to preview content available behind a link.",
   },
   {
     title: "Progress",
     href: "/docs/primitives/progress",
-    description: "Displays an indicator showing the completion progress of a task.",
+    description: "Displays an indicator showing the completion progress.",
   },
   {
     title: "Scroll-area",
@@ -45,13 +65,15 @@ const components = [
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const { user, logout } = useAuth(); // Hook into your auth state
+  const navigate = useNavigate();
 
-  // Initialize Dark Mode
   useEffect(() => {
-    const isDarkMode = 
-      localStorage.getItem("theme") === "dark" || 
-      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    
+    const isDarkMode =
+      localStorage.getItem("theme") === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
       setIsDark(true);
@@ -75,8 +97,6 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
-        
-        {/* Logo Section */}
         <Link to={ROUTES.HOME} onClick={closeMenu}>
           <div className="flex items-center gap-2 pr-6">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -88,14 +108,11 @@ export function SiteHeader() {
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
         <div className="flex-1 hidden lg:flex justify-center">
           <NavigationMenuDemo />
         </div>
 
-        {/* Right Actions Section */}
         <div className="flex items-center justify-end gap-2 md:gap-4">
-          
           <div className="hidden md:block">
             <InputGroupDemo />
           </div>
@@ -105,47 +122,114 @@ export function SiteHeader() {
             size="icon"
             onClick={toggleTheme}
             className="text-muted-foreground hover:text-foreground"
-            aria-label="Toggle dark mode"
           >
             {isDark ? <Sun className="size-5" /> : <Moon className="size-5" />}
           </Button>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden sm:flex text-muted-foreground hover:text-foreground"
-          >
-            <UserCircle className="size-6" />
-          </Button>
+          {/* DYNAMIC USER ACTIONS */}
+          {user ? (
+            <div className="hidden sm:flex items-center gap-3">
+              <Button
+                size="sm"
+                className="hidden lg:flex gap-1.5 rounded-full"
+                onClick={() => navigate("/create")}
+              >
+                <Plus className="size-4" /> Create Recipe
+              </Button>
 
-          {/* Mobile Hamburger Toggle */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full ring-2 ring-primary/20 hover:ring-primary/50 transition-all overflow-hidden"
+                  >
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt="Profile"
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <div className="size-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                        {user.username.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    Profile Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/feed")}>
+                    My Feed
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={logout}
+                    className="text-red-500 focus:text-red-500 focus:bg-red-500/10"
+                  >
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden sm:flex text-muted-foreground hover:text-foreground"
+            >
+              <UserCircle className="size-6" />
+            </Button>
+          )}
+
           <Button
             variant="ghost"
             size="icon"
             className="lg:hidden text-muted-foreground hover:text-foreground"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+            {isMenuOpen ? (
+              <X className="size-6" />
+            ) : (
+              <Menu className="size-6" />
+            )}
           </Button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
         <div className="lg:hidden absolute top-16 left-0 w-full bg-background border-b border-border shadow-lg animate-in slide-in-from-top-2">
           <div className="flex flex-col p-4 space-y-4">
             <div className="md:hidden pb-2">
               <InputGroupDemo />
             </div>
-            <Link to={ROUTES.HOME} onClick={closeMenu} className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+            <Link
+              to={ROUTES.HOME}
+              onClick={closeMenu}
+              className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+            >
               Home
             </Link>
-            <Link to={ROUTES.DOCS} onClick={closeMenu} className="text-lg font-medium text-foreground hover:text-primary transition-colors">
-              Documentation
-            </Link>
+            {user && (
+              <Link
+                to="/create"
+                onClick={closeMenu}
+                className="text-lg font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
+              >
+                <Plus className="size-5" /> Create Recipe
+              </Link>
+            )}
             <hr className="border-border/50" />
-            <Link to="/profile" onClick={closeMenu} className="flex items-center gap-2 text-lg font-medium text-foreground hover:text-primary transition-colors">
-              <UserCircle className="size-5" /> Account
+            <Link
+              to="/profile"
+              onClick={closeMenu}
+              className="flex items-center gap-2 text-lg font-medium text-foreground hover:text-primary transition-colors"
+            >
+              <UserCircle className="size-5" /> Account Settings
             </Link>
           </div>
         </div>
@@ -162,7 +246,10 @@ function InputGroupDemo() {
       <InputGroupAddon>
         <Search className="size-4" />
       </InputGroupAddon>
-      <InputGroupAddon align="inline-end" className="text-xs text-muted-foreground">
+      <InputGroupAddon
+        align="inline-end"
+        className="text-xs text-muted-foreground"
+      >
         12 results
       </InputGroupAddon>
     </InputGroup>
@@ -192,7 +279,11 @@ function NavigationMenuDemo() {
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {components.map((component) => (
-                <ListItem key={component.title} title={component.title} href={component.href}>
+                <ListItem
+                  key={component.title}
+                  title={component.title}
+                  href={component.href}
+                >
                   {component.description}
                 </ListItem>
               ))}

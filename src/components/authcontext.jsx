@@ -1,49 +1,41 @@
-import { createContext, useContext, useState, useEffect, useRef } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react"; // Added useRef
 import { getRequest } from "@/lib/api";
 import { API } from "@/lib/routes";
-import { InitialLoadingScreen } from "@/components/loading-screen"; // 1. Import the new screen
+import { InitialLoadingScreen } from "./loading-screen";
 
-// 1. Create the Context
 const AuthContext = createContext();
 
-// 2. Create the Provider Wrapper
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const hasCheckedSession = useRef(false); //
-  // This runs exactly once when the app is first opened or refreshed
+  const hasCheckedSession = useRef(false); // <--- This prevents the double-fire
+
   useEffect(() => {
+    // Only run if we haven't checked yet
     if (hasCheckedSession.current) return;
+
     const checkSession = async () => {
-      hasCheckedSession.current = true; //
+      hasCheckedSession.current = true; // Lock it
       try {
         const response = await getRequest(API.ME);
-        setUser(response.user); // The backend recognized the cookie!
+        setUser(response.user);
       } catch (error) {
-        setUser(null); // No valid cookie found
+        setUser(null);
       } finally {
-        setIsLoading(false); // Stop the loading spinner
+        setIsLoading(false);
       }
     };
 
     checkSession();
   }, []);
 
-  // Expose these tools to the rest of the app
-  const value = {
-    user,
-    setUser,
-    isAuthenticated: !!user,
-    isLoading,
-  };
-
   return (
-    <AuthContext.Provider value={value}>
-      {/* 2. Swap the basic div for the premium animated screen */}
+    <AuthContext.Provider
+      value={{ user, setUser, isAuthenticated: !!user, isLoading }}
+    >
       {isLoading ? <InitialLoadingScreen /> : children}
     </AuthContext.Provider>
   );
 }
 
-// 3. Create a custom hook for easy access
 export const useAuth = () => useContext(AuthContext);

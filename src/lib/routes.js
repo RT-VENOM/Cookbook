@@ -6,7 +6,8 @@ export const ROUTES = {
   ERROR: "/error",
   SIGNUP: "/signup",
   PROFILE: "/profile",
-  FEED: "/recipes"
+  FEED: "/recipes",
+  CREATE: "/create"
   };
 
 

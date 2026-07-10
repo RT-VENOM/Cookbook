@@ -190,7 +190,7 @@ export function AuthModal({ isOpen, onClose }) {
         <Separator orientation="vertical" className="hidden h-auto md:block" />
 
         {/* Form Side */}
-        <div className="flex w-full flex-col justify-center p-8 md:w-[60%] md:p-12">
+        <div className="flex w-full flex-col justify-center overflow-y-auto p-8 md:w-[60%] md:p-12">
           <div className="mb-6">
             <h2 className="text-2xl font-bold tracking-tight">
               {isLoginMode ? "Account Login" : "Account Sign Up"}
@@ -201,7 +201,6 @@ export function AuthModal({ isOpen, onClose }) {
                 : "Create an account to access your dashboard."}
             </p>
           </div>
-
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldSet>
               <FieldGroup className="space-y-4">

@@ -8,11 +8,14 @@ import ErrorPage from "@/pages/error";
 import RecipeFeed from "@/components/feed";
 import CreateRecipe from "@/pages/CreateRecipe";
 import Profile from "@/pages/Profile";
+import { AuthProvider } from "@/components/authcontext";
 // 1. The Layout: Header stays at the top, the <Outlet> renders the page content below
 function RootLayout() {
   return (
     <div className="relative flex min-h-screen flex-col">
-      <SiteHeader />
+      <AuthProvider>
+        <SiteHeader />
+      </AuthProvider>
       <main className="flex-1">
         <Outlet />
       </main>

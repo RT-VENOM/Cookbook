@@ -37,28 +37,36 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const components = [
+const categories = [
   {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content.",
+    title: "Breakfast",
+    href: "/search?category=breakfast",
+    description: "Start your day with energy.",
   },
   {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
+    title: "Lunch",
+    href: "/search?category=lunch",
+    description: "Quick and delicious midday meals.",
   },
   {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-    description: "Displays an indicator showing the completion progress.",
+    title: "Dinner",
+    href: "/search?category=dinner",
+    description: "Hearty meals for the evening.",
   },
   {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
+    title: "Dessert",
+    href: "/search?category=dessert",
+    description: "Satisfy your sweet cravings.",
+  },
+  {
+    title: "Vegan",
+    href: "/search?category=vegan",
+    description: "Plant-based goodness.",
+  },
+  {
+    title: "High Protein",
+    href: "/search?category=high-protein",
+    description: "Fuel your fitness goals.",
   },
 ];
 
@@ -260,40 +268,24 @@ function NavigationMenuDemo() {
   return (
     <NavigationMenu className="relative z-10 flex max-w-max flex-1 items-center justify-center p-4">
       <NavigationMenuList>
+        {/* Categories Menu */}
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="w-96 p-4 md:w-[500px] lg:w-[600px] space-y-2">
-              <ListItem href="/docs" title="Introduction">
-                Re-usable components built with Tailwind CSS.
-              </ListItem>
-              <ListItem href="/docs/installation" title="Installation">
-                How to install dependencies and structure your app.
-              </ListItem>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem className="hidden md:flex">
-          <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+          <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {components.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
-                  {component.description}
+              {categories.map((cat) => (
+                <ListItem key={cat.title} title={cat.title} href={cat.href}>
+                  {cat.description}
                 </ListItem>
               ))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
+        {/* Simple Link */}
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link to={ROUTES.DOCS}>Docs</Link>
+            <Link to="/search">Explore All</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

@@ -1,4 +1,4 @@
-import { X, Check, CircleAlert, CheckCircle2Icon } from "lucide-react";
+import { X, Check, CircleAlert, CheckCircle2Icon, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
@@ -7,25 +7,27 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { API, ROUTES } from "@/lib/routes";
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { Input } from "@/components/ui/input";
 import { getRequest, postRequest } from "@/lib/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthSchema } from "@/lib/validations";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/components/authcontext"; // Ensure correct import path
+import { useAuth } from "@/components/authcontext"; 
 
 export function AuthModal({ isOpen, onClose }) {
   const { setUser } = useAuth();
   const navigate = useNavigate();
   
-  // NEW: State to toggle between Login and Signup
+  // State to toggle between Login and Signup
   const [isLoginMode, setIsLoginMode] = useState(false);
+  
+  // State for the password visibility toggle
+  const [showPassword, setShowPassword] = useState(false);
   
   const [isSearching, setIsSearching] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState(null);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  const [authError, setAuthError] = useState(null); // To handle login failures
+  const [authError, setAuthError] = useState(null); 
 
   const {
     register,
@@ -71,7 +73,6 @@ export function AuthModal({ isOpen, onClose }) {
 const onSubmit = async (data) => {
     setAuthError(null);
     try {
-      // Determine which endpoint to hit based on mode
       const endpoint = isLoginMode ? API.LOGIN : API.REGISTER;
       
       const response = await postRequest(endpoint, {
@@ -88,6 +89,7 @@ const onSubmit = async (data) => {
         setShowSuccessAlert(false);
         setTimeout(() => {
           reset(); 
+          setShowPassword(false); // Reset password visibility on close
           onClose(); 
           navigate(ROUTES.FEED);
         }, 500);
@@ -96,16 +98,13 @@ const onSubmit = async (data) => {
     } catch (error) {
       console.error("Raw Auth Error:", error);
       
-      // Intercept nasty JSON/Server errors and provide secure, user-friendly messages
       let friendlyMessage = error.message || "Authentication failed. Please try again.";
       
-      // If it's a JSON parse error (meaning the backend crashed or returned HTML)
       if (friendlyMessage.includes("JSON") || friendlyMessage.includes("Unexpected token")) {
           friendlyMessage = isLoginMode 
             ? "Invalid username or password." 
             : "Server error. Please try again later.";
       } 
-      // If it's a login attempt, override detailed errors with a generic security message
       else if (isLoginMode) {
           friendlyMessage = "Invalid username or password.";
       }
@@ -117,7 +116,8 @@ const onSubmit = async (data) => {
   const toggleMode = () => {
     setIsLoginMode(!isLoginMode);
     setAuthError(null);
-    reset(); // Clear form when switching modes
+    setShowPassword(false); // Reset password visibility when switching modes
+    reset(); 
   };
 
   if (!isOpen) return null;
@@ -169,7 +169,7 @@ const onSubmit = async (data) => {
             <FieldSet>
               <FieldGroup className="space-y-4">
                 
-                {/* Error Banner for bad passwords/usernames */}
+                {/* Error Banner */}
                 {authError && (
                   <div className="p-3 text-sm font-medium text-red-500 bg-red-500/10 rounded-md border border-red-500/20">
                     {authError}
@@ -197,7 +197,28 @@ const onSubmit = async (data) => {
 
                 <Field className="space-y-1.5">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
+                  <InputGroup>
+                    <InputGroupInput 
+                      id="password" 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      {...register("password")} 
+                    />
+                    <InputGroupAddon align="inline-end">
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="flex items-center justify-center text-muted-foreground hover:text-foreground focus:outline-none transition-colors"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="size-4" />
+                        ) : (
+                          <Eye className="size-4" />
+                        )}
+                      </button>
+                    </InputGroupAddon>
+                  </InputGroup>
                   <FieldDescription>
                     {errors.password && <span className="font-medium text-red-500">{errors.password.message}</span>}
                   </FieldDescription>

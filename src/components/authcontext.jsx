@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { getRequest } from "@/lib/api";
 import { API } from "@/lib/routes";
 import { InitialLoadingScreen } from "@/components/loading-screen"; // 1. Import the new screen
@@ -10,10 +10,12 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const hasCheckedSession = useRef(false); //
   // This runs exactly once when the app is first opened or refreshed
   useEffect(() => {
+    if (hasCheckedSession.current) return;
     const checkSession = async () => {
+      hasCheckedSession.current = true; //
       try {
         const response = await getRequest(API.ME);
         setUser(response.user); // The backend recognized the cookie!
@@ -32,7 +34,7 @@ export function AuthProvider({ children }) {
     user,
     setUser,
     isAuthenticated: !!user,
-    isLoading
+    isLoading,
   };
 
   return (

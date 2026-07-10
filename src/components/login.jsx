@@ -141,19 +141,19 @@ export function AuthModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  return (
+return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-background shadow-2xl md:flex-row md:min-h-[550px]">
-        {/* Animated Success Alert */}
+        {/* Animated Success Alert - Themed properly and in the right spot! */}
         <div
           className={`absolute left-1/2 top-4 z-[100] w-full max-w-md -translate-x-1/2 px-4 transition-all duration-500 ease-in-out ${showSuccessAlert ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-8 opacity-0"}`}
         >
-          <Alert className="border-green-500/50 bg-green-50/95 text-green-900 backdrop-blur-md shadow-lg">
-            <CheckCircle2Icon className="h-4 w-4 !stroke-green-600" />
-            <AlertTitle>
+          <Alert className="border-primary/40 bg-background/90 text-foreground backdrop-blur-xl shadow-2xl shadow-primary/20">
+            <CheckCircle2Icon className="h-5 w-5 !stroke-primary" />
+            <AlertTitle className="font-bold text-primary tracking-tight">
               {isLoginMode ? "Login successful!" : "Registration successful!"}
             </AlertTitle>
-            <AlertDescription>
+            <AlertDescription className="text-muted-foreground font-medium">
               {isLoginMode
                 ? "Welcome back to your cookbook."
                 : "Your account has been created."}
@@ -294,27 +294,18 @@ export function AuthModal({ isOpen, onClose }) {
               </FieldGroup>
             </FieldSet>
 
-            {/* Animated Success Alert */}
-            <div
-              className={`absolute left-1/2 top-4 z-[100] w-full max-w-md -translate-x-1/2 px-4 transition-all duration-500 ease-in-out ${showSuccessAlert ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-8 opacity-0"}`}
-            >
-              <Alert className="border-primary/40 bg-background/90 text-foreground backdrop-blur-xl shadow-2xl shadow-primary/20">
-                <CheckCircle2Icon className="h-5 w-5 !stroke-primary" />
-                <AlertTitle className="font-bold text-primary tracking-tight">
-                  {isLoginMode
-                    ? "Login successful!"
-                    : "Registration successful!"}
-                </AlertTitle>
-                <AlertDescription className="text-muted-foreground font-medium">
-                  {isLoginMode
-                    ? "Welcome back to your cookbook."
-                    : "Your account has been created."}
-                </AlertDescription>
-              </Alert>
+            {/* THE MISSING BUTTONS ARE BACK! */}
+            <div className="mt-6 flex flex-col gap-3">
+              <Button type="submit" disabled={isSubmitting || showSuccessAlert || (!isLoginMode && usernameStatus === "taken")} className="w-full">
+                {isSubmitting ? "Processing..." : (isLoginMode ? "Login" : "Sign Up")}
+              </Button>
+              <Button type="button" variant="outline" className="w-full" onClick={toggleMode}>
+                {isLoginMode ? "Need an account? Sign Up" : "Already have an account? Login"}
+              </Button>
             </div>
+            
           </form>
         </div>
       </div>
     </div>
   );
-}

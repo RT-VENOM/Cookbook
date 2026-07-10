@@ -25,6 +25,7 @@ export async function getRequest(url) {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
     });
     return await handleResponse(response);
   } catch (error) {
@@ -45,6 +46,7 @@ export async function postRequest(url, payload) {
       },
       // Convert our JavaScript object into a JSON string for the network
       body: JSON.stringify(payload), 
+      credentials: "include",
     });
     return await handleResponse(response);
   } catch (error) {
